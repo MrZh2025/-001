@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四川省医疗器械检查员业务实战与合规监管通关考核系统（专家级）</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --primary-accent: #2563eb;
+            --success: #059669;
+            --success-light: #ecfdf5;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+            --warning: #d97706;
+            --warning-light: #fffbeb;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 20px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--gray-800);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        /* 顶部导航与状态栏 */
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #1d4ed8 100%);
+            color: white;
+            padding: 22px 20px;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .header-container {
+            max-width: 1040px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .inspector-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-top: 5px;
+            color: #cbd5e1;
+        }
+
+        .exam-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .timer {
+            font-size: 17px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: #fde047;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .progress-stat {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* 主体布局 */
+        .main-container {
+            max-width: 1040px;
+            margin: 24px auto;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: 1fr 290px;
+            gap: 24px;
+        }
+
+        @media (max-width: 880px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+
+        /* 试题区域 */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-badge {
+            background: #eff6ff;
+            color: #1e40af;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* 题目块 */
+        .question-block {
+            margin-bottom: 22px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--gray-200);
+            transition: all 0.2s ease;
+        }
+
+        .question-block:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .question-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 14px;
+            line-height: 1.65;
+        }
+
+        .q-tag {
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 12px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin-right: 6px;
+            display: inline-block;
+            border: 1px solid #cbd5e1;
+        }
+
+        .inspector-tag {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+
+        /* 选项列表 */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1.5px solid var(--gray-200);
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-accent);
+            background-color: var(--primary-light);
+            transform: translateX(4px);
+        }
+
+        .option-marker {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-300);
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gray-600);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            background: white;
+            margin-top: 1px;
+        }
+
+        .option-item.checkbox .option-marker {
+            border-radius: 6px;
+        }
+
+        /* 选中高亮状态 */
+        .option-item.selected {
+            border-color: var(--primary-accent);
+            background-color: var(--primary-light);
+            box-shadow: 0 0 0 1px var(--primary-accent);
+        }
+
+        .option-item.selected .option-marker {
+            background-color: var(--primary-accent);
+            border-color: var(--primary-accent);
+            color: white;
+        }
+
+        .option-text {
+            font-size: 14px;
+            color: var(--gray-800);
+            flex: 1;
+            line-height: 1.55;
+        }
+
+        /* 填空题专业试卷横线样式 */
+        .fill-question-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray-900);
+            line-height: 2.3;
+            margin-bottom: 8px;
+        }
+
+        .fill-blank-input {
+            display: inline-block;
+            margin: 0 4px;
+            padding: 0 6px 2px 6px;
+            border: none;
+            border-bottom: 2px solid #0f172a;
+            background: transparent;
+            border-radius: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            outline: none;
+            text-align: center;
+            vertical-align: baseline;
+            transition: all 0.2s ease;
+        }
+
+        .fill-blank-input::placeholder {
+            color: #94a3b8;
+            font-weight: normal;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        .fill-blank-input:hover {
+            border-bottom-color: #000000;
+            background-color: rgba(15, 23, 42, 0.03);
+        }
+
+        .fill-blank-input:focus {
+            border-bottom: 2.5px solid #000000;
+            background-color: rgba(15, 23, 42, 0.05);
+        }
+
+        .fill-blank-input.correct {
+            border-bottom: 2.5px solid var(--success) !important;
+            background-color: rgba(16, 185, 129, 0.08) !important;
+            color: #065f46 !important;
+        }
+
+        .fill-blank-input.wrong {
+            border-bottom: 2.5px solid var(--danger) !important;
+            background-color: rgba(239, 68, 68, 0.08) !important;
+            color: #991b1b !important;
+        }
+
+        /* 判分与深度法条解析 */
+
+        .result-box {
+            display: none;
+            margin-top: 14px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            line-height: 1.6;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .result-correct {
+            background-color: var(--success-light);
+            border-left: 4px solid var(--success);
+            color: #065f46;
+        }
+
+        .result-wrong {
+            background-color: var(--danger-light);
+            border-left: 4px solid var(--danger);
+            color: #991b1b;
+        }
+
+        .legal-ref {
+            font-weight: 700;
+            color: #1e3a8a;
+            display: block;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        /* 答题卡看板 */
+        .sidebar {
+            position: sticky;
+            top: 90px;
+            height: fit-content;
+        }
+
+        .card-panel {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+        }
+
+        .panel-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 7px;
+            margin-bottom: 16px;
+        }
+
+        .grid-num {
+            width: 38px;
+            height: 36px;
+            border-radius: 6px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .grid-num:hover {
+            border-color: var(--primary-accent);
+            color: var(--primary-accent);
+        }
+
+        .grid-num.done {
+            background: var(--primary-accent);
+            color: white;
+            border-color: var(--primary-accent);
+        }
+
+        .grid-num.judged-correct {
+            background: var(--success) !important;
+            color: white !important;
+            border-color: var(--success) !important;
+        }
+
+        .grid-num.judged-wrong {
+            background: var(--danger) !important;
+            color: white !important;
+            border-color: var(--danger) !important;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 13px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.35);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(30, 58, 138, 0.45);
+        }
+
+        .btn-reset {
+            width: 100%;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border: 1px solid var(--gray-300);
+            padding: 9px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            background: var(--gray-200);
+        }
+
+        /* 成绩弹窗 Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 16px;
+            max-width: 540px;
+            width: 100%;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 6px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+        }
+
+        .score-val {
+            font-size: 38px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 12px;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 6px;
+        }
+
+        .modal-desc {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-bottom: 22px;
+            line-height: 1.5;
+        }
+
+        .modal-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 22px;
+            background: var(--gray-50);
+            padding: 14px;
+            border-radius: 10px;
+        }
+
+        .stat-item h4 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .stat-item p {
+            font-size: 11.5px;
+            color: var(--gray-600);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-modal-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-modal-secondary {
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-container">
+        <div class="header-title">
+            <h1>四川省医疗器械检查员合规监管实战考核系统 <span class="inspector-badge">专家级 · 检查员专卷</span></h1>
+            <p>考核重点：现场核查四大主线、高类低报穿透、委托生产质量协议审计、PTR一致性与法定法律责任（满分100分）</p>
+        </div>
+        <div class="exam-status">
+            <div class="timer" id="timer">⏱️ 45:00</div>
+            <div class="progress-stat" id="progressStat">已答 0 / 27 题</div>
+        </div>
+    </div>
+</header>
+
+<main class="main-container">
+    <!-- 试题主区域 -->
+    <div class="content-area" id="quizContainer">
+
+        <!-- 一、 单选题 -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">一、 检查员业务单项选择题</div>
+                <div class="section-badge">共 10 题 · 每题 3 分 · 共 30 分</div>
+            </div>
+
+            <!-- Q1 -->
+            <div class="question-block" id="block_q1">
+                <div class="question-title">
+                    <span class="q-tag">单选 1</span>
+                    <span>【分类界定穿透检查】检查员在对某企业备案的“医用冷敷凝胶（一类，编码09-02-03）”进行飞行检查时，发现企业原材料仓库中存有大量“薄荷脑、水杨酸甲酯、辣椒提取物”，且配料记录显示实际添加了上述成分，用于增强“镇痛舒缓”效果。根据《医疗器械监督管理条例》与《注册与备案管理办法》，检查员应如何定性处理？</span>
+                    <span class="inspector-tag">高类低报核查</span>
+                </div>
+                <div class="options-list" data-qid="q1" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">属于一类产品工艺微小变更，要求企业在30日内完成配方备案变更即可。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">添加了发挥药理学、代谢作用的药物成分，属于严重的“以非医疗器械/一类器械冒充二/三类医疗器械（高类低报）”，应当依据739号令第81条按“未取得医疗器械注册证生产第二类/第三类医疗器械”定性并立案查处。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">只要成品经第三方检验机构检测理化指标合格，就不属于违法行为。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">判定为一般缺陷项，责令企业将薄荷脑等成分在包装标签上如实标明后继续销售。</div></div>
+                </div>
+                <div class="result-box" id="res_q1"></div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="question-block" id="block_q2">
+                <div class="question-title">
+                    <span class="q-tag">单选 2</span>
+                    <span>【前置资质与主体责任】依据我国现行医疗器械上市许可持有人（备案人）制度，单兵研发人员设立企业办理境内第一类医疗器械产品备案时，下列关于资质前置条件的表述，哪一项是唯一合法的？</span>
+                </div>
+                <div class="options-list" data-qid="q2" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">必须先取得设区的市级药监局核发的《第一类医疗器械生产备案凭证》方可申报产品备案。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">必须先通过省级药品监督管理部门组织的现场 GMP 纸质认证核查。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">企业唯一必需的法定行政资质证书是《企业营业执照》；产品备案前不需要、也不能提前办理生产许可证或生产备案。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">必须先取得国家药监局直属实验室出具的型式检验合格报告。</div></div>
+                </div>
+                <div class="result-box" id="res_q2"></div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="question-block" id="block_q3">
+                <div class="question-title">
+                    <span class="q-tag">单选 3</span>
+                    <span>【62号公告与体系备查】依据《国家药监局关于第一类医疗器械备案有关事项的公告》（2022年第62号），关于《风险管理资料》与《临床评价资料》在第一类医疗器械备案中的监管要求，下列说法正确的是：</span>
+                </div>
+                <div class="options-list" data-qid="q3" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">两份资料已彻底被国家法规废止，企业无需编制，检查员现场也不得查阅。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">办理备案申报时取消提交（不再作为政务窗口审查材料），但企业必须在内部质量管理体系中完整编制并归档留存，检查员现场检查时必查。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">第一类医疗器械必须像第三类器械一样，提交包含临床试验总结报告的全部纸质卷宗。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">只有自建厂房生产的企业需要留存，委托代工的品牌方无需留存该两项资料。</div></div>
+                </div>
+                <div class="result-box" id="res_q3"></div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="question-block" id="block_q4">
+                <div class="question-title">
+                    <span class="q-tag">单选 4</span>
+                    <span>【虚假备案法律责任】某企业通过提交虚假的第三方检验报告和伪造的工艺说明，骗取了《第一类医疗器械备案凭证》。检查员在事后监督检查中查实上述违法行为。依据《医疗器械监督管理条例》（739号令）第八十四条，市场监管部门应当作出的行政处罚是：</span>
+                    <span class="inspector-tag">重大违法处罚</span>
+                </div>
+                <div class="options-list" data-qid="q4" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">仅责令限期改正，补交真实的检验报告即可。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">由原备案部门依法取消其备案，处以5万元以上15万元以下罚款；情节严重的，责令停产停业，对直接责任人员最高处以没收收入并处30%以上3倍以下罚款，且5年内禁止其从事医疗器械生产经营。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">处以 1000 元以下警告罚款。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">没收全部固定资产并吊销法定代表人的医师资格证书。</div></div>
+                </div>
+                <div class="result-box" id="res_q4"></div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="question-block" id="block_q5">
+                <div class="question-title">
+                    <span class="q-tag">单选 5</span>
+                    <span>【检验报告覆盖率核查】检查员在现场核查企业的《产品技术要求（PTR）》与第三方《产品全项检验报告》时，发现 PTR 中规定了“外观、pH值、黏度、装量差异、重金属限量、需氧菌总数、霉菌和酵母菌总数”共 7 项指标，而检验报告中未检测“霉菌和酵母菌总数”。该情形在检查员缺陷项判定中属于：</span>
+                </div>
+                <div class="options-list" data-qid="q5" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">轻微缺陷，企业现场签署承诺书即可通过。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">严重缺陷项（不符合备案检验报告必须 100% 覆盖 PTR 所有性能指标的法定红线），备案申报资料不真实/不完整，属于未按规定进行全项检验。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">合理缺项，一类器械默认免检微生物指标。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">只要产品没有造成人身伤害，检查员无需记录该缺陷。</div></div>
+                </div>
+                <div class="result-box" id="res_q5"></div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="question-block" id="block_q6">
+                <div class="question-title">
+                    <span class="q-tag">单选 6</span>
+                    <span>【委托生产质量协议审计】在医疗器械注册人/备案人（MAH）委托生产模式下，检查员现场调阅双方签订的《医疗器械委托生产质量协议》，下列哪一条款如果缺失，将被检查员判定为“严重质量管理体系缺陷”？</span>
+                </div>
+                <div class="options-list" data-qid="q6" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">委托方对代工厂原材料采购、关键工艺变更的审核批准权与现场质量审计权条款。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">产品年度销售分红比例条款。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">节假日加班补贴计算标准条款。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">双方企业法定代表人直系亲属名单。</div></div>
+                </div>
+                <div class="result-box" id="res_q6"></div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="question-block" id="block_q7">
+                <div class="question-title">
+                    <span class="q-tag">单选 7</span>
+                    <span>【出厂检验与放行核查】检查员在检查某自建厂房的一类医疗器械生产车间时，发现仓库待发运的 1000 盒成品上已贴附《合格证》，但化验室尚未完成该批次的需氧菌总数培养计数（培养周期需48小时，实际仅培养12小时），且质量受权人已提前签署《成品放行单》。依据法规应判定为：</span>
+                    <span class="inspector-tag">放行红线核查</span>
+                </div>
+                <div class="options-list" data-qid="q7" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">符合规定，属于企业为了提高交货效率的合理流程优化。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">严重违法违规行为，违反了《条例》第35条“未经检验或者检验不合格的医疗器械不得出厂放行”的法定红线，涉嫌虚假放行与未按规程出厂检验。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">只要后续培养结果最终没超标，就不算违法。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">属于检验员个人失误，由检验员罚款 50 元即可。</div></div>
+                </div>
+                <div class="result-box" id="res_q7"></div>
+            </div>
+
+            <!-- Q8 -->
+            <div class="question-block" id="block_q8">
+                <div class="question-title">
+                    <span class="q-tag">单选 8</span>
+                    <span>【告知性备案撤销情形】依据《医疗器械注册与备案管理办法》（总局令第47号）第81条，设区的市级药监部门在日常监督检查中，发现已备案的第一类医疗器械存在下列哪种情形时，应当依法直接“取消备案”？</span>
+                </div>
+                <div class="options-list" data-qid="q8" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">企业法定代表人发生变更但尚未办理变更登记的。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">备案时提交虚假资料，或者备案人未按照备案的产品技术要求组织生产且情节严重的。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">企业连续 3 个月未在天猫店铺产生销售额的。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">代工厂更换了门卫保安人员的。</div></div>
+                </div>
+                <div class="result-box" id="res_q8"></div>
+            </div>
+
+            <!-- Q9 -->
+            <div class="question-block" id="block_q9">
+                <div class="question-title">
+                    <span class="q-tag">单选 9</span>
+                    <span>【经营流通资质穿透】某医药贸易企业从老周公司采购了一批“针灸针（第一类医疗器械）”并批发销售给辖区内的诊所和药店。县市场监管稽查大队执法人员前往检查，要求该贸易企业出示《医疗器械经营许可证》或《第二类医疗器械经营备案凭证》。关于该执法要求，下列法律定性正确的是：</span>
+                </div>
+                <div class="options-list" data-qid="q9" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">执法要求正确，经营任何医疗器械都必须办理经营许可证。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">执法要求错误。依据《条例》第41条，从事第一类医疗器械经营活动彻底免办许可和备案，企业仅凭《营业执照》即可合法批发与零售一类器械。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">只有零售免办，批发必须办理《第一类医疗器械经营许可证》。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">必须向市药监局缴纳 10 万元保证金方可免除经营证。</div></div>
+                </div>
+                <div class="result-box" id="res_q9"></div>
+            </div>
+
+            <!-- Q10 -->
+            <div class="question-block" id="block_q10">
+                <div class="question-title">
+                    <span class="q-tag">单选 10</span>
+                    <span>【留样与追溯记录保存期】依据《医疗器械生产监督管理办法》（53号令）与质量管理规范，第一类医疗器械生产企业对每批出厂产品的“留样样品”及“批生产记录、批检验记录、销售记录”，其法定最低保存期限应当为：</span>
+                </div>
+                <div class="options-list" data-qid="q10" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">产品出厂后 3 个月。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">产品有效期届满后至少 1 年；无有效期的，不得少于产品上市后 5 年。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">永久保存，无论企业是否注销。</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">留样满 7 天即可销毁。</div></div>
+                </div>
+                <div class="result-box" id="res_q10"></div>
+            </div>
+
+        </div>
+
+        <!-- 二、 多选题 -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">二、 检查员业务多项选择题</div>
+                <div class="section-badge">共 5 题 · 每题 4 分 · 共 20 分 (多选/漏选/错选均不得分)</div>
+            </div>
+
+            <!-- Q11 -->
+            <div class="question-block" id="block_q11">
+                <div class="question-title">
+                    <span class="q-tag">多选 1</span>
+                    <span>【现场检查“四大一致性”主线】检查员进驻第一类医疗器械生产企业或委托生产受托方开展现场核查时，核心必须穿透核查的“四大一致性”主线包括：</span>
+                    <span class="inspector-tag">现场检查核心法则</span>
+                </div>
+                <div class="options-list" data-qid="q11" data-type="multi">
+                    <div class="option-item checkbox" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text"><strong>备案一致性</strong>：现场实际生产产品名称、规格型号、结构组成与政务网公示的《产品备案凭证》及 PTR 是否 100% 一致。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text"><strong>物料采购与检验一致性</strong>：原材料供货商、牌号纯度、进货检验报告（COA）与 PTR 附录原材料清单是否一致。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text"><strong>工艺参数与批记录一致性</strong>：车间现场温湿度、配料比例、灭菌/封装参数与备案工艺说明及《批生产记录》是否一致。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text"><strong>标签说明书宣称一致性</strong>：最小包装标签上的预期用途、禁忌症与备案说明书样稿是否一致，是否存在夸大疗效或医美宣称。</div></div>
+                </div>
+                <div class="result-box" id="res_q11"></div>
+            </div>
+
+            <!-- Q12 -->
+            <div class="question-block" id="block_q12">
+                <div class="question-title">
+                    <span class="q-tag">多选 2</span>
+                    <span>【严重缺陷项判定标准】依据国家医疗器械现场检查指导原则，在对一类器械企业核查时，下列哪些情形可直接判定为“严重缺陷项（严重不符合 GMP 要求）”？</span>
+                </div>
+                <div class="options-list" data-qid="q12" data-type="multi">
+                    <div class="option-item checkbox" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">擅自在第一类医疗器械中添加未经备案的化学药物成分或中药提取液。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">生产设备、检验仪器未进行检定/校准，化验室不具备按 PTR 进行成品出厂全项检验的基本能力且未依法委托检验。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">未建立批生产记录，或者批生产记录、批检验记录存在系统性伪造、数据严重失真。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">受托生产代工厂未经委托方书面许可，擅自将订单二次转包给无资质的小作坊生产。</div></div>
+                </div>
+                <div class="result-box" id="res_q12"></div>
+            </div>
+
+            <!-- Q13 -->
+            <div class="question-block" id="block_q13">
+                <div class="question-title">
+                    <span class="q-tag">多选 3</span>
+                    <span>【说明书与包装标签禁用词红线】检查员审查第一类医疗器械（如医用退热凝胶、液体敷料、膏药基质等）包装标签与电商详情页时，下列哪些宣称表述属于法定“绝对禁用违规高压词汇”？</span>
+                </div>
+                <div class="options-list" data-qid="q13" data-type="multi">
+                    <div class="option-item checkbox" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">“消炎止痛、促进伤口快速愈合、杀灭幽门螺旋杆菌、治疗颈椎病”等疾病治疗性宣称。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">“美白淡斑、抗衰紧致、祛痘除印、医美级玻尿酸面膜”等生活美容与化妆品宣称。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">“仅用于发热患者局部物理降温”、“用于完整皮肤表面物理屏障”等符合目录限定的物理作用表述。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">“100%根治无副作用、国家级保密祖传配方、无影神针”等封建迷信或绝对化夸大词汇。</div></div>
+                </div>
+                <div class="result-box" id="res_q13"></div>
+            </div>
+
+            <!-- Q14 -->
+            <div class="question-block" id="block_q14">
+                <div class="question-title">
+                    <span class="q-tag">多选 4</span>
+                    <span>【不良事件监测与追溯召回】依据《医疗器械不良事件监测和再评价管理办法》，作为第一类医疗器械备案人，企业必须建立并履行的上市后安全责任包括：</span>
+                </div>
+                <div class="options-list" data-qid="q14" data-type="multi">
+                    <div class="option-item checkbox" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">在国家医疗器械不良事件监测信息系统中注册企业账号，主动收集、调查并如实上报产品可疑不良事件。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">当发现产品存在严重质量安全隐患时，应当立即主动停止生产销售，向社会发布召回公告，并向所在地市药监局报告。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">建立从原料采购、生产批号、出厂质检到各级销售客户的完整可追溯链条，确保“来源可查、去向可追”。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">只要发生不良事件投诉，一律对外隐瞒并与受害人签署保密协议，严禁向药监局报告。</div></div>
+                </div>
+                <div class="result-box" id="res_q14"></div>
+            </div>
+
+            <!-- Q15 -->
+            <div class="question-block" id="block_q15">
+                <div class="question-title">
+                    <span class="q-tag">多选 5</span>
+                    <span>【自建厂房现场检查核查点】检查员对新取得《第一类医疗器械生产备案凭证》的自建厂房企业开展事后首次现场核查时，重点检查的硬件与体系要素包括：</span>
+                </div>
+                <div class="options-list" data-qid="q15" data-type="multi">
+                    <div class="option-item checkbox" onclick="selectOption(this, 'A')"><div class="option-marker">A</div><div class="option-text">厂房选址是否符合工业厂房性质，生产区、仓储区（原料库/成品库/留样室）与化验室人流物流是否有效分开。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'B')"><div class="option-marker">B</div><div class="option-text">纯化水制水机组产水水质指标（电导率、微生物等）是否定期监测并有真实记录。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'C')"><div class="option-marker">C</div><div class="option-text">质量负责人是否具备相关专业背景，是否独立行使质量否决权与产品出厂放行权。</div></div>
+                    <div class="option-item checkbox" onclick="selectOption(this, 'D')"><div class="option-marker">D</div><div class="option-text">企业员工宿舍是否有独立阳台和无线网络。</div></div>
+                </div>
+                <div class="result-box" id="res_q15"></div>
+            </div>
+
+        </div>
+
+        <!-- 三、 判断题 -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">三、 检查员业务判断分析题</div>
+                <div class="section-badge">共 5 题 · 每题 3 分 · 共 15 分</div>
+            </div>
+
+            <!-- Q16 -->
+            <div class="question-block" id="block_q16">
+                <div class="question-title">
+                    <span class="q-tag">判断 1</span>
+                    <span>【检查判定】某企业生产的第一类医疗器械在市场监督抽检中被判定为“装量差异不合格”，企业申辩称“这是受托代工厂灌装工人失误所致，我公司只是委托方，药监局只能处罚代工厂，不能对我们备案人进行行政处罚”。该申辩在法律上完全成立。</span>
+                </div>
+                <div class="options-list" data-qid="q16" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'T')"><div class="option-marker">√</div><div class="option-text">正确</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'F')"><div class="option-marker">×</div><div class="option-text">错误</div></div>
+                </div>
+                <div class="result-box" id="res_q16"></div>
+            </div>
+
+            <!-- Q17 -->
+            <div class="question-block" id="block_q17">
+                <div class="question-title">
+                    <span class="q-tag">判断 2</span>
+                    <span>【检查判定】在编写《产品技术要求（PTR）》时，企业可以将某项核心指标的检验方法直接表述为“参照供货商内部企业标准检验”或“见出厂合格随附单”，检查员在技术审查中应予以认可。</span>
+                </div>
+                <div class="options-list" data-qid="q17" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'T')"><div class="option-marker">√</div><div class="option-text">正确</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'F')"><div class="option-marker">×</div><div class="option-text">错误</div></div>
+                </div>
+                <div class="result-box" id="res_q17"></div>
+            </div>
+
+            <!-- Q18 -->
+            <div class="question-block" id="block_q18">
+                <div class="question-title">
+                    <span class="q-tag">判断 3</span>
+                    <span>【检查判定】研发人员在实验室完成配方打样试制后，由于此时企业尚未取得《生产许可证》或《生产备案凭证》，因此实验室试制出的实物样品不具备合法性，不能送交第三方 CMA 实验室开展全项注册检验。</span>
+                </div>
+                <div class="options-list" data-qid="q18" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'T')"><div class="option-marker">√</div><div class="option-text">正确</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'F')"><div class="option-marker">×</div><div class="option-text">错误</div></div>
+                </div>
+                <div class="result-box" id="res_q18"></div>
+            </div>
+
+            <!-- Q19 -->
+            <div class="question-block" id="block_q19">
+                <div class="question-title">
+                    <span class="q-tag">判断 4</span>
+                    <span>【检查判定】取得第一类医疗器械生产备案凭证的企业，在自己的法定生产地址直接将自产的一类器械批发销售给全国各级医院和连锁药房，依法免于办理任何《医疗器械经营许可证》或经营备案。</span>
+                </div>
+                <div class="options-list" data-qid="q19" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'T')"><div class="option-marker">√</div><div class="option-text">正确</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'F')"><div class="option-marker">×</div><div class="option-text">错误</div></div>
+                </div>
+                <div class="result-box" id="res_q19"></div>
+            </div>
+
+            <!-- Q20 -->
+            <div class="question-block" id="block_q20">
+                <div class="question-title">
+                    <span class="q-tag">判断 5</span>
+                    <span>【检查判定】第一类医疗器械实行告知性备案管理，企业向市级药监部门提交材料后当场或3日内拿到《备案凭证》，意味着药监部门已对产品实质安全性作出了终身终局免责背书，后续检查员不得再对备案技术要求提出质疑。</span>
+                </div>
+                <div class="options-list" data-qid="q20" data-type="single">
+                    <div class="option-item" onclick="selectOption(this, 'T')"><div class="option-marker">√</div><div class="option-text">正确</div></div>
+                    <div class="option-item" onclick="selectOption(this, 'F')"><div class="option-marker">×</div><div class="option-text">错误</div></div>
+                </div>
+                <div class="result-box" id="res_q20"></div>
+            </div>
+
+        </div>
+
+        <!-- 四、 填空题 -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">四、 检查员实操与法规条款填空题</div>
+                <div class="section-badge">共 7 题 · 15 个空 · 共 35 分</div>
+            </div>
+
+            <!-- Q21 -->
+            <div class="question-block" id="block_q21">
+                <div class="fill-question-text">
+                    <span class="q-tag">填空 1 (4分)</span>
+                    《医疗器械监督管理条例》第103条规定：医疗器械效用主要通过 <input type="text" class="fill-blank-input" id="blank_q21_1" style="width:120px;" placeholder="机制方式"> 等方式获得，不是通过 <input type="text" class="fill-blank-input" id="blank_q21_2" style="width:120px;" placeholder="学科方式"> 、免疫学或者代谢的方式获得，或者虽然有这些方式参与但只起辅助作用。
+                </div>
+                <div class="result-box" id="res_q21"></div>
+            </div>
+
+            <!-- Q22 -->
+            <div class="question-block" id="block_q22">
+                <div class="fill-question-text">
+                    <span class="q-tag">填空 2 (6分)</span>
+                    依据我国医疗器械上市许可持有人（MAH）制度，法定办证先后顺序必须严格遵循：【 1. <input type="text" class="fill-blank-input" style="width:120px;" id="blank_q22_1" placeholder="主体资质"> 】 ➔ 【 2. <input type="text" class="fill-blank-input" style="width:220px;" id="blank_q22_2" placeholder="产品准入证件(全称)"> 】 ➔ 【 3. <input type="text" class="fill-blank-input" style="width:220px;" id="blank_q22_3" placeholder="生产资格证件(若自产)"> 】 ➔ 合法上市销售。
+                </div>
+                <div class="result-box" id="res_q22"></div>
+            </div>
+
+            <!-- Q23 -->
+            <div class="question-block" id="block_q23">
+                <div class="fill-question-text">
+                    <span class="q-tag">填空 3 (5分)</span>
+                    第一类医疗器械产品准入与生产准入均实行 <input type="text" class="fill-blank-input" style="width:100px;" id="blank_q23_1" placeholder="属性性质"> 备案管理，其法定受理与发放凭证的部门级别为所在地设区的 <input type="text" class="fill-blank-input" style="width:80px;" id="blank_q23_2" placeholder="市/省"> 药品监督管理部门。
+                </div>
+                <div class="result-box" id="res_q23"></div>
+            </div>
+
+            <!-- Q24 -->
+            <div class="question-block" id="block_q24">
+                <div class="fill-question-text">
+                    <span class="q-tag">填空 4 (6分)</span>
+                    在委托代工生产中，品牌方（备案人）对产品的 <input type="text" class="fill-blank-input" style="width:150px;" id="blank_q24_1" placeholder="生命周期范围"> 质量安全承担法定总责；受托代工厂对车间每批产品的 <input type="text" class="fill-blank-input" style="width:130px;" id="blank_q24_2" placeholder="工艺制造"> 质量以及成品出厂 <input type="text" class="fill-blank-input" style="width:100px;" id="blank_q24_3" placeholder="质检放行"> 把关负责。
+                </div>
+                <div class="result-box" id="res_q24"></div>
+            </div>
+
+            <!-- Q25 -->
+            <div class="question-block" id="block_q25">
+                <div class="fill-question-text">
+                    <span class="q-tag">填空 5 (4分)</span>
+                    依据《医疗器械监督管理条例》第四十一条，从事第一类医疗器械经营流通活动，不需申请 <input type="text" class="fill-blank-input" style="width:110px;" id="blank_q25_1" placeholder="行政资质"> ，也无需办理 <input type="text" class="fill-blank-input" style="width:110px;" id="blank_q25_2" placeholder="行政资质"> 。
+                </div>
+                <div class="result-box" id="res_q25"></div>
+            </div>
+
+            <!-- Q26 -->
+            <div class="question-block" id="block_q26">
+                <div class="fill-question-text">
+                    <span class="q-tag">填空 6 (5分)</span>
+                    依据2022年第8号通告，第一类医疗器械《产品技术要求（PTR）》正文必须包含：产品型号规格划分、性能指标、 <input type="text" class="fill-blank-input" style="width:120px;" id="blank_q26_1" placeholder="检验项目"> 以及附录主要 <input type="text" class="fill-blank-input" style="width:140px;" id="blank_q26_2" placeholder="材料材质"> 清单。
+                </div>
+                <div class="result-box" id="res_q26"></div>
+            </div>
+
+            <!-- Q27 -->
+            <div class="question-block" id="block_q27">
+                <div class="fill-question-text">
+                    <span class="q-tag">填空 7 (5分)</span>
+                    单兵研发人员老周通过委托代工上市针灸针（一类），个人全流程仅需办理 <input type="text" class="fill-blank-input" style="width:70px;" id="blank_q27_1" placeholder="证件数"> 张法定证件（执照+产品备案证），从启动到产品正式合法上市卖货，全周期预估耗时约 <input type="text" class="fill-blank-input" style="width:100px;" id="blank_q27_2" placeholder="月数"> 个月左右。
+                </div>
+                <div class="result-box" id="res_q27"></div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <!-- 右侧悬浮答题卡 -->
+    <aside class="sidebar">
+        <div class="card-panel">
+            <div class="panel-title">
+                <span>答题卡看板</span>
+                <span style="font-size: 12px; color: var(--gray-600); font-weight: normal;">共 27 题</span>
+            </div>
+
+            <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 6px;">单选题 (1-10)</div>
+            <div class="card-grid">
+                <div class="grid-num" id="card_q1" onclick="scrollToQ('block_q1')">1</div>
+                <div class="grid-num" id="card_q2" onclick="scrollToQ('block_q2')">2</div>
+                <div class="grid-num" id="card_q3" onclick="scrollToQ('block_q3')">3</div>
+                <div class="grid-num" id="card_q4" onclick="scrollToQ('block_q4')">4</div>
+                <div class="grid-num" id="card_q5" onclick="scrollToQ('block_q5')">5</div>
+                <div class="grid-num" id="card_q6" onclick="scrollToQ('block_q6')">6</div>
+                <div class="grid-num" id="card_q7" onclick="scrollToQ('block_q7')">7</div>
+                <div class="grid-num" id="card_q8" onclick="scrollToQ('block_q8')">8</div>
+                <div class="grid-num" id="card_q9" onclick="scrollToQ('block_q9')">9</div>
+                <div class="grid-num" id="card_q10" onclick="scrollToQ('block_q10')">10</div>
+            </div>
+
+            <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 6px;">多选题 (11-15)</div>
+            <div class="card-grid">
+                <div class="grid-num" id="card_q11" onclick="scrollToQ('block_q11')">11</div>
+                <div class="grid-num" id="card_q12" onclick="scrollToQ('block_q12')">12</div>
+                <div class="grid-num" id="card_q13" onclick="scrollToQ('block_q13')">13</div>
+                <div class="grid-num" id="card_q14" onclick="scrollToQ('block_q14')">14</div>
+                <div class="grid-num" id="card_q15" onclick="scrollToQ('block_q15')">15</div>
+            </div>
+
+            <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 6px;">判断题 (16-20)</div>
+            <div class="card-grid">
+                <div class="grid-num" id="card_q16" onclick="scrollToQ('block_q16')">16</div>
+                <div class="grid-num" id="card_q17" onclick="scrollToQ('block_q17')">17</div>
+                <div class="grid-num" id="card_q18" onclick="scrollToQ('block_q18')">18</div>
+                <div class="grid-num" id="card_q19" onclick="scrollToQ('block_q19')">19</div>
+                <div class="grid-num" id="card_q20" onclick="scrollToQ('block_q20')">20</div>
+            </div>
+
+            <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 6px;">填空题 (21-27)</div>
+            <div class="card-grid">
+                <div class="grid-num" id="card_q21" onclick="scrollToQ('block_q21')">21</div>
+                <div class="grid-num" id="card_q22" onclick="scrollToQ('block_q22')">22</div>
+                <div class="grid-num" id="card_q23" onclick="scrollToQ('block_q23')">23</div>
+                <div class="grid-num" id="card_q24" onclick="scrollToQ('block_q24')">24</div>
+                <div class="grid-num" id="card_q25" onclick="scrollToQ('block_q25')">25</div>
+                <div class="grid-num" id="card_q26" onclick="scrollToQ('block_q26')">26</div>
+                <div class="grid-num" id="card_q27" onclick="scrollToQ('block_q27')">27</div>
+            </div>
+
+            <button class="btn-submit" onclick="submitExam()">
+                <span>🚀 提交并执行检查员级评分</span>
+            </button>
+            <button class="btn-reset" onclick="resetExam()">🔄 重新开始考核</button>
+        </div>
+    </aside>
+</main>
+
+<!-- 成绩弹窗 -->
+<div class="modal-overlay" id="scoreModal">
+    <div class="modal-card">
+        <div class="score-circle">
+            <div class="score-val" id="finalScoreText">0</div>
+            <div class="score-label">满分 100 分 · 80 分合格</div>
+        </div>
+        <div class="modal-title" id="evalLevelText">成绩核算完毕</div>
+        <div class="modal-desc" id="evalSummaryText">请查看各题法规依据与检查员缺陷项解析</div>
+
+        <div class="modal-stats">
+            <div class="stat-item">
+                <h4 style="color: var(--success);" id="choiceScoreText">0</h4>
+                <p>客观题得分</p>
+            </div>
+            <div class="stat-item">
+                <h4 style="color: var(--primary);" id="fillScoreText">0</h4>
+                <p>实操填空得分</p>
+            </div>
+            <div class="stat-item">
+                <h4 style="color: #4f46e5;" id="accuracyText">0%</h4>
+                <p>考核达标率</p>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-modal btn-modal-primary" onclick="closeModalAndReview()">🔍 深度复盘错题与法条解析</button>
+            <button class="btn-modal btn-modal-secondary" onclick="window.print()">🖨️ 打印考核评估报告</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 检查员级标准答案库与深度法条解析
+    const standardAnswers = {
+        q1: {
+            ans: "B",
+            score: 3,
+            analysis: "【检查员定性要点】依据《医疗器械监督管理条例》（739号令）第103条及第一类医疗器械目录界定原则：一类冷敷凝胶仅限通过物理降温发挥效用。添加薄荷脑、水杨酸甲酯等药理活性成分属于典型的“高类低报/非法添加”，依据739号令第81条，应当按“未取得医疗器械注册证生产二/三类医疗器械”定性重罚并没收违法所得。<span class='legal-ref'>🔗 法规依据：《医疗器械监督管理条例》第七百三十九号令 第81条、第103条</span>"
+        },
+        q2: {
+            ans: "C",
+            score: 3,
+            analysis: "【检查员核查要点】我国全面实行上市许可持有人（MAH）制度，必须遵循“先有产品身份证（产品备案凭证），后有工厂准生证（生产备案凭证）”的法定逻辑。备案前唯一的法定前置资质证书就是《企业营业执照》，无需提前取得生产许可证或经营许可证。<span class='legal-ref'>🔗 法规依据：《医疗器械注册与备案管理办法》（总局令第47号）第16条</span>"
+        },
+        q3: {
+            ans: "B",
+            score: 3,
+            analysis: "【检查员核查要点】2022年62号公告重大优化：取消在政务窗口提交《风险分析资料》和《临床评价资料》，但明确要求企业必须在内部质量管理体系（QMS）中完整编制并归档备查。检查员现场检查时若发现企业体系中无上述两份文件，将直接判定为“严重体系缺陷项”。<span class='legal-ref'>🔗 法规依据：《国家药监局关于第一类医疗器械备案有关事项的公告》（2022年第62号）</span>"
+        },
+        q4: {
+            ans: "B",
+            score: 3,
+            analysis: "【检查员处罚要点】依据739号令第84条：提供虚假资料备案的，由原备案部门取消备案，处5万元以上15万元以下罚款；情节严重的，责令停产停业，对直接负责的主管人员没收收入并处30%以上3倍以下罚款，且5年内禁止其从事医疗器械生产经营活动。<span class='legal-ref'>🔗 法规依据：《医疗器械监督管理条例》第七百三十九号令 第84条第(一)项</span>"
+        },
+        q5: {
+            ans: "B",
+            score: 3,
+            analysis: "【检查员核查要点】第一类医疗器械检验报告必须 100% 全项覆盖经备案的《产品技术要求（PTR）》所载全部性能指标。缺失“霉菌和酵母菌总数”属于未按规定进行全项检验，属于严重缺陷项，必须要求企业停产整改并重新开展全项送检。<span class='legal-ref'>🔗 法规依据：《医疗器械注册与备案管理办法》第18条、《医疗器械产品技术要求编写指导原则》</span>"
+        },
+        q6: {
+            ans: "A",
+            score: 3,
+            analysis: "【检查员审计要点】委托方作为 MAH 主体，必须对产品全生命周期负责，法定必须在《质量协议》中明确：委托方对代工厂原材料供应商审计、关键工艺变更批准、生产过程监督与现场审计权。缺失该条款说明委托方放弃了质量管控主体责任。<span class='legal-ref'>🔗 法规依据：《医疗器械生产监督管理办法》（总局令第53号）第34条</span>"
+        },
+        q7: {
+            ans: "B",
+            score: 3,
+            analysis: "【检查员核查要点】依据739号令第35条：出厂医疗器械必须经全项检验合格并附合格证明文件。未完成规定培养周期即出具合格证并放行，属于严重的“虚假放行与未检验出厂”，依法按生产不合格医疗器械立案重罚。<span class='legal-ref'>🔗 法规依据：《医疗器械监督管理条例》第35条、第86条</span>"
+        },
+        q8: {
+            ans: "B",
+            score: 3,
+            analysis: "【检查员处理要点】《注册与备案管理办法》第81条明文列举了取消备案的法定情形：提供虚假资料备案的；未按照备案的 PTR 组织生产且情节严重的；或者经界定不属于医疗器械的，市局应直接依职权取消备案。<span class='legal-ref'>🔗 法规依据：《医疗器械注册与备案管理办法》第81条</span>"
+        },
+        q9: {
+            ans: "B",
+            score: 3,
+            analysis: "【检查员法理要点】《医疗器械监督管理条例》第四十一条第一款明文规定：“从事第一类医疗器械经营活动，不需申请许可，也无需办理备案。”无论是批发还是零售，仅凭营业执照即可全网合法流通。<span class='legal-ref'>🔗 法规依据：《医疗器械监督管理条例》第41条</span>"
+        },
+        q10: {
+            ans: "B",
+            score: 3,
+            analysis: "【检查员核查要点】依据《医疗器械生产监督管理办法》第37条：记录与留样的保存期限应当至少涵盖医疗器械有效期届满后1年；没有有效期的，不得少于上市后5年。<span class='legal-ref'>🔗 法规依据：《医疗器械生产监督管理办法》（总局令第53号）第37条</span>"
+        },
+
+        // 多选题答案
+        q11: {
+            ans: ["A", "B", "C", "D"],
+            score: 4,
+            analysis: "【检查员四大一致性法则】检查员现场检查的精髓就是“四大一致性”：备案一致性（证物相符）、物料采购一致性（原料溯源）、工艺参数一致性（批记录真实）、说明书标签一致性（严防夸大）。<span class='legal-ref'>🔗 四川省医疗器械检查员现场检查核心规程</span>"
+        },
+        q12: {
+            ans: ["A", "B", "C", "D"],
+            score: 4,
+            analysis: "【严重缺陷判定】A（高类低报/非法添加）、B（检验能力缺失）、C（记录系统性造假）、D（擅自非法转包代工），均属于 GMP 现场检查一票否决的“严重缺陷项”。<span class='legal-ref'>🔗 《医疗器械生产质量管理规范现场检查指导原则》</span>"
+        },
+        q13: {
+            ans: ["A", "B", "D"],
+            score: 4,
+            analysis: "【标签禁用词红线】一类医疗器械严禁宣称治疗疾病（A）、严禁宣称生活美容医美（B）、严禁绝对化夸大用语（D）。C项属于目录限定的标准合规表述，不属于违规词汇。<span class='legal-ref'>🔗 《医疗器械说明书和标签管理规定》（总局令第6号）</span>"
+        },
+        q14: {
+            ans: ["A", "B", "C"],
+            score: 4,
+            analysis: "【上市后安全责任】MAH 必须履行不良事件监测（A）、主动缺陷召回（B）、全链条批次追溯（C）。D项隐瞒不报属于严重违法行为。<span class='legal-ref'>🔗 《医疗器械不良事件监测和再评价管理办法》第12条</span>"
+        },
+        q15: {
+            ans: ["A", "B", "C"],
+            score: 4,
+            analysis: "【自建厂房检查要点】厂区人流物流分区（A）、纯化水制水机组水质监测（B）、质量负责人独立行使放行权（C）是车间验收核心关键点；员工宿舍阳台（D）属于后勤福利，不属于药监 GMP 审查范畴。<span class='legal-ref'>🔗 《医疗器械生产监督管理办法》第14条</span>"
+        },
+
+        // 判断题答案
+        q16: {
+            ans: "F",
+            score: 3,
+            analysis: "【检查员判定】错误！备案人是产品全生命周期法定第一责任人，对外承担全部法定行政处罚与产品召回责任；备案人受罚后，可凭《质量协议》对内向代工厂全额追偿。<span class='legal-ref'>🔗 《医疗器械监督管理条例》第20条</span>"
+        },
+        q17: {
+            ans: "F",
+            score: 3,
+            analysis: "【检查员判定】错误！依据国家药监局2022年第8号通告：PTR 检验方法必须明确、具体、可操作，严禁使用“见随附资料/见企业内部标准”等模糊表述。<span class='legal-ref'>🔗 《医疗器械产品技术要求编写指导原则》</span>"
+        },
+        q18: {
+            ans: "F",
+            score: 3,
+            analysis: "【检查员判定】错误！研发阶段的小试、中试样品属于受控试验打样，不需要生产许可证即可依法制备并送第三方检测机构开展备案检验。<span class='legal-ref'>🔗 《医疗器械注册与备案管理办法》第18条</span>"
+        },
+        q19: {
+            ans: "T",
+            score: 3,
+            analysis: "【检查员判定】正确！《医疗器械经营监督管理办法》第7条明确规定：医疗器械生产企业在生产地址销售本企业生产的产品，依法豁免办理经营许可或备案。<span class='legal-ref'>🔗 《医疗器械经营监督管理办法》（总局令第54号）第7条</span>"
+        },
+        q20: {
+            ans: "F",
+            score: 3,
+            analysis: "【检查员判定】错误！告知性备案仅对材料形式完整性核对，不代表对产品安全性做终局背书。检查员在事后监管中一旦发现技术指标不合规，依然依法要求企业整改或直接取消备案。<span class='legal-ref'>🔗 《医疗器械监督管理条例》第16条</span>"
+        }
+    };
+
+    // 填空题标准答案与智能语义匹配
+    const fillAnswers = {
+        q21: {
+            blanks: [
+                { id: "blank_q21_1", score: 2, valid: ["物理", "物理等方式", "物理方式"] },
+                { id: "blank_q21_2", score: 2, valid: ["药理学", "药理", "药理方式", "药理学方式"] }
+            ],
+            standard: "① 物理 / 物理等方式 ； ② 药理学 / 药理",
+            analysis: "【法条原文】《条例》第103条：医疗器械效用主要通过物理等方式获得，不是通过药理学、免疫学或者代谢方式获得。"
+        },
+        q22: {
+            blanks: [
+                { id: "blank_q22_1", score: 2, valid: ["营业执照", "企业营业执照", "执照"] },
+                { id: "blank_q22_2", score: 2, valid: ["第一类医疗器械产品备案凭证", "产品备案凭证", "第一类医疗器械备案凭证", "产品备案证"] },
+                { id: "blank_q22_3", score: 2, valid: ["第一类医疗器械生产备案凭证", "生产备案凭证", "第一类生产备案凭证", "生产备案证"] }
+            ],
+            standard: "① 营业执照 ； ② 第一类医疗器械产品备案凭证 ； ③ 第一类医疗器械生产备案凭证",
+            analysis: "【法定公式】必须遵循：主体执照 ➔ 产品身份证（产品备案凭证） ➔ 工厂准生证（生产备案凭证，自建厂房才办） ➔ 合法上市。"
+        },
+        q23: {
+            blanks: [
+                { id: "blank_q23_1", score: 2.5, valid: ["告知", "告知性"] },
+                { id: "blank_q23_2", score: 2.5, valid: ["市", "设区的市", "地市"] }
+            ],
+            standard: "① 告知性 / 告知 ； ② 市 / 设区的市",
+            analysis: "【管辖部门】第一类医疗器械产品与生产均实行告知性备案，法定受理部门为设区的市级药品监督管理部门（市市场监管局）。"
+        },
+        q24: {
+            blanks: [
+                { id: "blank_q24_1", score: 2, valid: ["全生命周期", "全生命周期质量", "产品质量", "质量", "全生命"] },
+                { id: "blank_q24_2", score: 2, valid: ["生产制造", "制造", "生产工艺", "生产", "制造质量", "工艺"] },
+                { id: "blank_q24_3", score: 2, valid: ["检验", "出厂检验", "放行", "质检", "出厂质检"] }
+            ],
+            standard: "① 全生命周期 / 全生命周期质量安全 ； ② 生产制造 / 生产工艺 ； ③ 检验 / 出厂检验放行",
+            analysis: "【权责界限】委托方负产品设计与全生命周期安全总责；受托方对车间生产过程工艺及每批成品出厂检验放行负责。"
+        },
+        q25: {
+            blanks: [
+                { id: "blank_q25_1", score: 2, valid: ["许可", "经营许可", "行政许可", "经营许可证"] },
+                { id: "blank_q25_2", score: 2, valid: ["备案", "经营备案", "备案凭证"] }
+            ],
+            standard: "① 许可 / 经营许可 ； ② 备案 / 经营备案",
+            analysis: "【法条原文】《条例》第41条：从事第一类医疗器械经营活动，不需申请许可，也无需办理备案。"
+        },
+        q26: {
+            blanks: [
+                { id: "blank_q26_1", score: 2.5, valid: ["检验", "检验方法", "检测", "测试"] },
+                { id: "blank_q26_2", score: 2.5, valid: ["主要原材料", "原材料", "原料", "材质"] }
+            ],
+            standard: "① 检验 / 检验方法 ； ② 主要原材料 / 原材料",
+            analysis: "【PTR规范】依据2022年8号通告：PTR四大核心板块为型号规格划分、性能指标、检验方法、主要原材料附录。"
+        },
+        q27: {
+            blanks: [
+                { id: "blank_q27_1", score: 2.5, valid: ["2", "两", "2张", "两张"] },
+                { id: "blank_q27_2", score: 2.5, valid: ["1.5", "1-2", "2", "一个半", "1.5个"] }
+            ],
+            standard: "① 2 / 两张（营业执照 + 产品备案凭证） ； ② 1.5 / 1~2 个月",
+            analysis: "【实操周期】老周走代工模式仅需办2张证（执照+产品备案证），免建厂免办生产证，全周期约1.5个月即可上市开卖。"
+        }
+    };
+
+    let userAnswers = {};
+
+    // 倒计时
+    let totalSeconds = 45 * 60;
+    const timerEl = document.getElementById("timer");
+    const timerInterval = setInterval(() => {
+        if (totalSeconds <= 0) {
+            clearInterval(timerInterval);
+            alert("⏰ 考试时间已到，系统已为您自动交卷！");
+            submitExam();
+            return;
+        }
+        totalSeconds--;
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        timerEl.innerHTML = `⏱️ ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }, 1000);
+
+    function selectOption(el, optVal) {
+        const parentList = el.parentElement;
+        const qid = parentList.dataset.qid;
+        const qType = parentList.dataset.type;
+
+        if (qType === "single") {
+            const allOpts = parentList.querySelectorAll(".option-item");
+            allOpts.forEach(item => item.classList.remove("selected"));
+            el.classList.add("selected");
+            userAnswers[qid] = optVal;
+        } else if (qType === "multi") {
+            el.classList.toggle("selected");
+            if (!userAnswers[qid]) userAnswers[qid] = [];
+            
+            if (el.classList.contains("selected")) {
+                if (!userAnswers[qid].includes(optVal)) userAnswers[qid].push(optVal);
+            } else {
+                userAnswers[qid] = userAnswers[qid].filter(v => v !== optVal);
+                if (userAnswers[qid].length === 0) delete userAnswers[qid];
+            }
+        }
+
+        updateProgress();
+    }
+
+    document.querySelectorAll(".fill-blank-input").forEach(input => {
+        input.addEventListener("input", function() {
+            updateProgress();
+        });
+    });
+
+    function updateProgress() {
+        const total = 27;
+        let count = 0;
+
+        for (let i = 1; i <= 20; i++) {
+            const qid = "q" + i;
+            const cardItem = document.getElementById("card_" + qid);
+            if (userAnswers[qid] && (Array.isArray(userAnswers[qid]) ? userAnswers[qid].length > 0 : true)) {
+                count++;
+                if (cardItem) cardItem.classList.add("done");
+            } else {
+                if (cardItem) cardItem.classList.remove("done");
+            }
+        }
+
+        for (let i = 21; i <= 27; i++) {
+            const qid = "q" + i;
+            const cardItem = document.getElementById("card_" + qid);
+            const blockEl = document.getElementById("block_" + qid);
+            const inputs = blockEl.querySelectorAll(".fill-blank-input");
+            let allFilled = true;
+            inputs.forEach(inp => {
+                if (inp.value.trim().length === 0) allFilled = false;
+            });
+
+            if (allFilled) {
+                count++;
+                if (cardItem) cardItem.classList.add("done");
+            } else {
+                if (cardItem) cardItem.classList.remove("done");
+            }
+        }
+
+        document.getElementById("progressStat").innerText = `已答 ${count} / ${total} 题`;
+    }
+
+    function scrollToQ(blockId) {
+        const el = document.getElementById(blockId);
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
+    function submitExam() {
+        let totalScore = 0;
+        let choiceScore = 0;
+        let fillScore = 0;
+        let correctCount = 0;
+
+        // 1. 单选 (1-10)
+        for (let i = 1; i <= 10; i++) {
+            const qid = "q" + i;
+            const resBox = document.getElementById("res_" + qid);
+            const userAns = userAnswers[qid];
+            const std = standardAnswers[qid];
+            const cardItem = document.getElementById("card_" + qid);
+
+            resBox.style.display = "block";
+            if (userAns === std.ans) {
+                totalScore += std.score;
+                choiceScore += std.score;
+                correctCount++;
+                resBox.className = "result-box result-correct";
+                resBox.innerHTML = `<strong>✅ 判定正确！(+${std.score}分)</strong><br>${std.analysis}`;
+                if (cardItem) cardItem.className = "grid-num judged-correct";
+            } else {
+                resBox.className = "result-box result-wrong";
+                resBox.innerHTML = `<strong>❌ 判定失误！您的选择：${userAns || "未作答"}，检查员标准认定：${std.ans}</strong><br>${std.analysis}`;
+                if (cardItem) cardItem.className = "grid-num judged-wrong";
+            }
+        }
+
+        // 2. 多选 (11-15)
+        for (let i = 11; i <= 15; i++) {
+            const qid = "q" + i;
+            const resBox = document.getElementById("res_" + qid);
+            const userAns = userAnswers[qid] ? [...userAnswers[qid]].sort().join("") : "";
+            const std = standardAnswers[qid];
+            const stdAnsStr = std.ans.sort().join("");
+            const cardItem = document.getElementById("card_" + qid);
+
+            resBox.style.display = "block";
+            if (userAns === stdAnsStr) {
+                totalScore += std.score;
+                choiceScore += std.score;
+                correctCount++;
+                resBox.className = "result-box result-correct";
+                resBox.innerHTML = `<strong>✅ 判定完全正确！(+${std.score}分)</strong><br>${std.analysis}`;
+                if (cardItem) cardItem.className = "grid-num judged-correct";
+            } else {
+                resBox.className = "result-box result-wrong";
+                resBox.innerHTML = `<strong>❌ 判定失误！您的选择：${userAns || "未作答"}，检查员标准认定：${stdAnsStr}</strong><br>${std.analysis}`;
+                if (cardItem) cardItem.className = "grid-num judged-wrong";
+            }
+        }
+
+        // 3. 判断 (16-20)
+        for (let i = 16; i <= 20; i++) {
+            const qid = "q" + i;
+            const resBox = document.getElementById("res_" + qid);
+            const userAns = userAnswers[qid];
+            const std = standardAnswers[qid];
+            const cardItem = document.getElementById("card_" + qid);
+
+            resBox.style.display = "block";
+            const userDisp = userAns === "T" ? "√ (正确)" : (userAns === "F" ? "× (错误)" : "未作答");
+            const stdDisp = std.ans === "T" ? "√ (正确)" : "× (错误)";
+
+            if (userAns === std.ans) {
+                totalScore += std.score;
+                choiceScore += std.score;
+                correctCount++;
+                resBox.className = "result-box result-correct";
+                resBox.innerHTML = `<strong>✅ 裁决正确！(+${std.score}分)</strong><br>${std.analysis}`;
+                if (cardItem) cardItem.className = "grid-num judged-correct";
+            } else {
+                resBox.className = "result-box result-wrong";
+                resBox.innerHTML = `<strong>❌ 裁决错误！您的判断：${userDisp}，检查员标准裁决：${stdDisp}</strong><br>${std.analysis}`;
+                if (cardItem) cardItem.className = "grid-num judged-wrong";
+            }
+        }
+
+        // 4. 填空题 (21-27)
+        for (let i = 21; i <= 27; i++) {
+            const qid = "q" + i;
+            const resBox = document.getElementById("res_" + qid);
+            const stdItem = fillAnswers[qid];
+            const cardItem = document.getElementById("card_" + qid);
+            let qScore = 0;
+            let totalQMax = 0;
+
+            stdItem.blanks.forEach(b => {
+                totalQMax += b.score;
+                const inputEl = document.getElementById(b.id);
+                const userVal = (inputEl.value || "").trim().replace(/[《》【】]/g, '');
+                
+                const isMatch = b.valid.some(kw => userVal.toLowerCase() === kw.toLowerCase() || userVal.includes(kw) || kw.includes(userVal) && userVal.length >= 2);
+
+                if (userVal.length > 0 && isMatch) {
+                    qScore += b.score;
+                    inputEl.className = "fill-blank-input correct";
+                } else {
+                    inputEl.className = "fill-blank-input wrong";
+                }
+            });
+
+            totalScore += qScore;
+            fillScore += qScore;
+            if (qScore === totalQMax) correctCount++;
+
+            resBox.style.display = "block";
+            if (qScore === totalQMax) {
+                resBox.className = "result-box result-correct";
+                resBox.innerHTML = `<strong>✅ 填空全部准确！(+${qScore}分)</strong><br><strong>法定标准认定：</strong>${stdItem.standard}<br>${stdItem.analysis}`;
+                if (cardItem) cardItem.className = "grid-num judged-correct";
+            } else {
+                resBox.className = "result-box result-wrong";
+                resBox.innerHTML = `<strong>⚠️ 填空得分：${qScore} / ${totalQMax} 分</strong><br><strong>法定标准认定：</strong>${stdItem.standard}<br>${stdItem.analysis}`;
+                if (cardItem) cardItem.className = qScore > 0 ? "grid-num judged-correct" : "grid-num judged-wrong";
+            }
+        }
+
+        // 弹窗成绩展示
+        document.getElementById("finalScoreText").innerText = Math.round(totalScore);
+        document.getElementById("choiceScoreText").innerText = choiceScore + "分";
+        document.getElementById("fillScoreText").innerText = Math.round(fillScore) + "分";
+        document.getElementById("accuracyText").innerText = Math.round((totalScore / 100) * 100) + "%";
+
+        let levelTitle = "通过考核 · 资深检查专家！🏆";
+        let levelDesc = "恭喜您！您展现了极其深厚的医疗器械法律法规素养与现场核查穿透能力，具备独立带队检查资格！";
+        if (totalScore < 80) {
+            levelTitle = "未达检查员考核线 · 请复盘！🔍";
+            levelDesc = "检查员考核合格线为 80 分。建议点击下方按钮仔细研读标红题目的法条依据与处罚判定要点！";
+        }
+        document.getElementById("evalLevelText").innerText = levelTitle;
+        document.getElementById("evalSummaryText").innerText = levelDesc;
+
+        document.getElementById("scoreModal").style.display = "flex";
+    }
+
+    function closeModalAndReview() {
+        document.getElementById("scoreModal").style.display = "none";
+        scrollToQ("block_q1");
+    }
+
+    function resetExam() {
+        if (confirm("确定要清空所有答题记录，重新开始检查员考核吗？")) {
+            location.reload();
+        }
+    }
+</script>
+
+</body>
+</html>
